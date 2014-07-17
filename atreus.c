@@ -146,7 +146,7 @@ void calculate_presses() {
       keyboard_modifier_keys |= KEY_RIGHT_GUI;
     } else if(keycode > 255 && usb_presses < 6) {
       // modifier plus keypress
-      keyboard_modifier_keys |= (keycode >> 8);
+      keyboard_modifier_keys |= (keycode >> 12);
       keyboard_keys[usb_presses++] = (keycode & 255);
     } else if(usb_presses < 6){
       // keypress
