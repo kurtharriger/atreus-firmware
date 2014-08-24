@@ -11,7 +11,16 @@ void layer_jump() {
   layer_to_jump = 2;
 };
 
-void (*layer_functions[])(void) = {reset, activate_fn, layer_jump};
+void activate_swapped_hands() {
+  // todo: activate mode to swap hands while pressed
+}
+
+void (*layer_functions[])(void) = {
+  reset, 
+  activate_fn,
+  layer_jump,
+  activate_swapped_hands
+};
 
 void per_cycle() {
   if(fn_decay > 1) {
