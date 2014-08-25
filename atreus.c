@@ -116,6 +116,17 @@ void pre_invoke_functions() {
   per_cycle();
 };
 
+void post_invoke_level_change() {
+  for(int i = 0; i < pressed_count; i++) {
+    int keycode = current_layer[presses[i]];
+    if(keycode >= MIN_LAYER && keycode <= MAX_LAYER) {
+          // layer set
+		current_layer_number = keycode - MIN_LAYER;
+	}
+  };
+};
+
+
 void calculate_presses() {
   int usb_presses = 0;
   for(int i = 0; i < pressed_count; i++) {
@@ -123,11 +134,6 @@ void calculate_presses() {
     if(keycode >= MIN_FUNCTION && keycode <= MAX_FUNCTION) {
       // regular layout functions
       (layer_functions[keycode - MIN_FUNCTION])();
-    } else if(keycode >= MIN_PRE_FUNCTION && keycode <= MAX_PRE_FUNCTION) {
-      // pre-invoke functions have already been processed
-    } else if(keycode >= MIN_LAYER && keycode <= MAX_LAYER) {
-      // layer set
-      current_layer_number = keycode - MIN_LAYER;
     } else if(keycode == KEYBOARD_LEFT_CTRL) {
       keyboard_modifier_keys |= KEY_LEFT_CTRL;
     } else if(keycode == KEYBOARD_RIGHT_CTRL) {
@@ -145,11 +151,13 @@ void calculate_presses() {
     } else if(keycode == KEYBOARD_RIGHT_GUI) {
       keyboard_modifier_keys |= KEY_RIGHT_GUI;
     } else if(keycode > 255 && usb_presses < 6) {
-      // modifier plus keypress
+       // modifier plus keypress
+      keyboard_modifier_keys |= locked_keyboard_modifier_keys;
       keyboard_modifier_keys |= (keycode >> 8);
       keyboard_keys[usb_presses++] = (keycode & 255);
     } else if(usb_presses < 6){
       // keypress
+      keyboard_modifier_keys |= locked_keyboard_modifier_keys;
       keyboard_keys[usb_presses++] = keycode;
     };
   };
@@ -183,6 +191,7 @@ int main() {
     debounce(DEBOUNCE_PASSES);
     pre_invoke_functions();
     calculate_presses();
+    post_invoke_level_change();
     usb_keyboard_send();
   };
 };
