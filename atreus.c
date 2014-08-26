@@ -27,10 +27,10 @@ int presses[KEY_COUNT];
 int last_pressed_count = 0;
 int last_presses[KEY_COUNT];
 
-#define CTRL(key)   (0x1000 + (key))
-#define SHIFT(key)  (0x2000 + (key))
-#define ALT(key)    (0x4000 + (key))
-#define GUI(key)    (0x8000 + (key))
+#define CTRL(key)   (0x0100 + (key))
+#define SHIFT(key)  (0x0200 + (key))
+#define ALT(key)    (0x0400 + (key))
+#define GUI(key)    (0x0800 + (key))
 
 /* LAYERS and FUNCTIONS are pessimistic, there's 4095 unused numbers between
  * the USB_MAX_KEY and the CTRL mask bit.  */
@@ -116,13 +116,14 @@ void pre_invoke_functions() {
   per_cycle();
 };
 
-void post_invoke_level_change() {
+void pre_invoke_level_change() {
   for(int i = 0; i < pressed_count; i++) {
     int keycode = current_layer[presses[i]];
     if(keycode >= MIN_LAYER && keycode <= MAX_LAYER) {
           // layer set
-		current_layer_number = keycode - MIN_LAYER;
-	}
+		  current_layer_number = keycode - MIN_LAYER;
+      usb_presses = 0;
+	  }
   };
 };
 
@@ -190,8 +191,8 @@ int main() {
     clear_keys();
     debounce(DEBOUNCE_PASSES);
     pre_invoke_functions();
+    pre_invoke_level_change();
     calculate_presses();
-    post_invoke_level_change();
     usb_keyboard_send();
   };
 };
