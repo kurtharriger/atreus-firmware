@@ -123,7 +123,7 @@ void pre_invoke_level_change() {
           // layer set
 		  current_layer_number = keycode - MIN_LAYER;
       pressed_count = 0;
-      _delay_ms(50);
+      _delay_us(50);
       return;
 	  }
   };

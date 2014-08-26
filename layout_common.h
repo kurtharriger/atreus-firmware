@@ -5,7 +5,6 @@ uint8_t locked_keyboard_modifier_keys=0;
 
 void activate_fn() {
   fn_decay = 20;
-  locked_keyboard_modifier_keys = 0;
 };
 
 int layer_to_jump = 0;
@@ -16,7 +15,10 @@ void layer_jump() {
 };
 
 void per_cycle() {
+
   if(fn_decay > 1) {
+    
+    locked_keyboard_modifier_keys = 0;
     current_layer = layers[1];
     fn_decay--;
   } else if(fn_decay == 1) {
