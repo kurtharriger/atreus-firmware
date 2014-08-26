@@ -28,7 +28,7 @@ int last_pressed_count = 0;
 int last_presses[KEY_COUNT];
 
 #define CTRL(key)   (0x0100 + (key))
-#define SHIFT(key)  (0x0200 + (key))
+#define SHIFT(key)  (0x2000 + (key))
 #define ALT(key)    (0x0400 + (key))
 #define GUI(key)    (0x0800 + (key))
 
