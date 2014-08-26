@@ -43,10 +43,13 @@ int last_presses[KEY_COUNT];
 #define MAX_FUNCTION      (MAX_LAYER        + FUNCTIONS)
 #define MIN_PRE_FUNCTION  (MAX_FUNCTION     + 1)
 #define MAX_PRE_FUNCTION  (MAX_FUNCTION     + FUNCTIONS)
+#define MIN_POST_FUNCTION  (MAX_PRE_FUNCTION     + 1)
+#define MAX_POST_FUNCTION  (MAX_PRE_FUNCTION     + FUNCTIONS)
 
 #define LAYER(layer)          (MIN_LAYER        + (layer))
 #define FUNCTION(number)      (MIN_FUNCTION     + (number))
 #define PRE_FUNCTION(number)  (MIN_PRE_FUNCTION + (number))
+#define POST_FUNCTION(number)  (MIN_POST_FUNCTION + (number))
 
 // layout.h must define:
 // * layers: array of int[KEY_COUNT]
@@ -106,6 +109,15 @@ void debounce(int passes_remaining) {
   }
 };
 
+
+void clear_keys() {
+  current_layer = layers[current_layer_number];
+  keyboard_modifier_keys = 0;
+  for(int i = 0; i < 6; i++) {
+    keyboard_keys[i] = 0;
+  };
+};
+
 void pre_invoke_functions() {
   for(int i = 0; i < pressed_count; i++) {
     int keycode = current_layer[presses[i]];
@@ -116,13 +128,23 @@ void pre_invoke_functions() {
   per_cycle();
 };
 
-void pre_invoke_level_change() {
+
+void post_invoke_functions() {
+  for(int i = 0; i < pressed_count; i++) {
+    int keycode = current_layer[presses[i]];
+    if(keycode >= MIN_POST_FUNCTION && keycode <= MAX_POST_FUNCTION) {
+      (layer_functions[keycode - MIN_POST_FUNCTION])();
+    }
+  }
+};
+
+void post_invoke_level_change() {
   for(int i = 0; i < pressed_count; i++) {
     int keycode = current_layer[presses[i]];
     if(keycode >= MIN_LAYER && keycode <= MAX_LAYER) {
           // layer set
 		  current_layer_number = keycode - MIN_LAYER;
-      pressed_count = 0;
+
       _delay_us(50);
       return;
 	  }
@@ -179,13 +201,6 @@ void init() {
   _delay_ms(500);
 };
 
-void clear_keys() {
-  current_layer = layers[current_layer_number];
-  keyboard_modifier_keys = 0;
-  for(int i = 0; i < 6; i++) {
-    keyboard_keys[i] = 0;
-  };
-};
 
 int main() {
   init();
@@ -193,9 +208,10 @@ int main() {
     clear_keys();
     debounce(DEBOUNCE_PASSES);
     pre_invoke_functions();
-    pre_invoke_level_change();
     calculate_presses();
     usb_keyboard_send();
+    post_invoke_functions();
+    post_invoke_level_change();
   };
 };
 

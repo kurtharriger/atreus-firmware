@@ -17,8 +17,6 @@ void layer_jump() {
 void per_cycle() {
 
   if(fn_decay > 1) {
-    
-    locked_keyboard_modifier_keys = 0;
     current_layer = layers[1];
     fn_decay--;
   } else if(fn_decay == 1) {
@@ -37,6 +35,7 @@ void activate_swapped_hands() {
 void fn_normal_mode() {
   locked_keyboard_modifier_keys = 0;
   current_layer_number = LAYER_NORMAL;
+  _delay_us(50);
 }
 
 void fn_lockctrl() {
