@@ -122,7 +122,9 @@ void pre_invoke_level_change() {
     if(keycode >= MIN_LAYER && keycode <= MAX_LAYER) {
           // layer set
 		  current_layer_number = keycode - MIN_LAYER;
-      usb_presses = 0;
+      pressed_count = 0;
+      _delay_ms(50);
+      return;
 	  }
   };
 };

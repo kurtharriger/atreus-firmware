@@ -1,9 +1,11 @@
 
 
 int fn_decay = 0;
+uint8_t locked_keyboard_modifier_keys=0;
 
 void activate_fn() {
   fn_decay = 20;
+  locked_keyboard_modifier_keys = 0;
 };
 
 int layer_to_jump = 0;
@@ -12,9 +14,6 @@ int layer_to_jump = 0;
 void layer_jump() {
   layer_to_jump = 2;
 };
-
-
-
 
 void per_cycle() {
   if(fn_decay > 1) {
@@ -32,9 +31,6 @@ void per_cycle() {
 void activate_swapped_hands() {
    // todo: activate mode to swap hands while pressed
 }
-
-uint8_t locked_keyboard_modifier_keys=0;
-
 
 void fn_normal_mode() {
   locked_keyboard_modifier_keys = 0;
